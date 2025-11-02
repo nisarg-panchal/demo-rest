@@ -1,0 +1,41 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /positions/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: app-json-file
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: app-json
+          app: dcir-api
+          env: dev
+          __path__: /media/nisarg/data/projects/demo-rest/logs/app-json*.log
+    pipeline_stages:
+      # Parse each line as JSON (works with logstash-logback-encoder output)
+      - json:
+          expressions:
+            level: level
+            logger: logger
+            thread: thread
+            message: message
+            correlationId: correlationId
+            traceId: traceId
+            spanId: spanId
+            app: app
+            env: env
+      # Promote important JSON fields to labels (good for filtering)
+      - labels:
+          level:
+          logger:
+          app:
+          env:
+          correlationId:
+          traceId:
+          spanId:

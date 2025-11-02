@@ -1,0 +1,86 @@
+services:
+  rest-api:
+    networks:
+      - app-network
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - '8080:8080'
+    environment:
+      - 'DB_HOST=postgres'
+      - 'DB_NAME=peopledb'
+      - 'DB_USER=postgres'
+      - 'DB_PASSWORD=postgres'
+      - 'LOKI_HOST=loki'
+      - 'LOKI_PORT=3100'
+    depends_on:
+      - postgres
+      - loki
+
+  postgres:
+    container_name: postgres
+    networks:
+      - app-network
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=peopledb'
+      - 'POSTGRES_PASSWORD=postgres'
+      - 'POSTGRES_USER=postgres'
+    ports:
+      - '6432:5432'
+    volumes:
+        - pgdata:/var/lib/postgresql/data
+
+  loki:
+    networks:
+      - app-network
+    image: grafana/loki:2.9.6
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki-data:/loki
+      - loki-config:/etc/loki
+    # Loki ships with a working local-config.yaml in the image
+
+  promtail:
+    networks:
+      - app-network
+    image: grafana/promtail:2.9.6
+    command: -config.file=/etc/promtail/promtail-config.yml
+    volumes:
+      # Map your app logs directory into the container read-only
+      - ../logs:/var/log/app:ro
+      - ./docker/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
+      - promtail-positions:/positions
+    depends_on:
+      - loki
+
+  grafana:
+    networks:
+        - app-network
+    image: grafana/grafana:11.1.0
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - loki
+    volumes:
+      - grafana-data:/var/lib/grafana
+      # Optional: auto-provision Loki datasource
+      - grafana-provisioning:/etc/grafana/provisioning
+
+volumes:
+  loki-data:
+  loki-config:
+  grafana-data:
+  promtail-positions:
+  grafana-provisioning:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge
