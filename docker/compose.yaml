@@ -47,11 +47,11 @@ services:
     networks:
       - app-network
     image: grafana/promtail:2.9.6
-    command: -config.file=/etc/promtail/promtail-config.yml
+    command: -config.expand-env=true -config.file=/etc/promtail/promtail-config.yml
     volumes:
       # Map your app logs directory into the container read-only
       - ../logs:/var/log/app:ro
-      - ./docker/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
+      - ./promtail-config.yml:/etc/promtail/promtail-config.yml:ro
       - promtail-positions:/positions
     depends_on:
       - loki
