@@ -77,6 +77,16 @@ services:
       # Optional: auto-provision Loki datasource
       - grafana-provisioning:/etc/grafana/provisioning
 
+  redis:
+    container_name: redis
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    volumes:
+      - redis-data:/data
+
 volumes:
   loki-data:
   loki-config:
@@ -84,6 +94,7 @@ volumes:
   promtail-positions:
   grafana-provisioning:
   pgdata:
+  redis-data:
   logs:
 
 networks:

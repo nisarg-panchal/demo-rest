@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.cache.annotation.Cacheable;
 
+@Cacheable(value = "persons")
 @Builder
 @Getter
 @Setter
