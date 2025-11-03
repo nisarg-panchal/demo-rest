@@ -11,7 +11,7 @@
   </parent>
   <groupId>com.nisarg.spring</groupId>
   <artifactId>demo-rest</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>demo-rest</name>
   <description>demo-rest</description>
   <url/>
@@ -189,14 +189,16 @@
         <configuration>
           <detail>true</detail>
           <cleanCache>true</cleanCache>
-          <docker>
-            <imageName>${project.groupId}/${project.artifactId}</imageName>
-            <tag>latest</tag>
-            <pullPolicy>IF_NOT_PRESENT</pullPolicy>
-            <ports>
-              <port>8080</port>
-            </ports>
-          </docker>
+          <image>
+            <name>nisarg/demo-rest:${project.version}</name>
+            <builder>paketobuildpacks/builder-jammy-base</builder>
+            <runImage>paketobuildpacks/run-jammy-base</runImage>
+            <env>
+              <BP_JVM_VERSION>21</BP_JVM_VERSION>
+              <BP_MAVEN_BUILD_ARGUMENTS>-DskipTests</BP_MAVEN_BUILD_ARGUMENTS>
+              <BP_LOG_LEVEL>INFO</BP_LOG_LEVEL>
+            </env>
+          </image>
           <excludes>
             <exclude>
               <groupId>org.projectlombok</groupId>

@@ -13,7 +13,7 @@
 
   <!-- File: structured JSON (rolling: daily + 100MB) -->
   <appender name="FILE_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>logs/app-json.log</file>
+    <file>./logs/app-json.log</file>
 
     <!-- Modern policy: combines time + size based rolling -->
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">

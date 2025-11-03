@@ -1,21 +1,21 @@
 services:
   rest-api:
+    image: nisarg/demo-rest:1.0.0
+    ports:
+      - "8080:8080"
     networks:
       - app-network
-    build:
-      context: ../
-      dockerfile: ./docker/Dockerfile
-    ports:
-      - '8080:8080'
+    volumes:
+      - ../logs:/workspace/logs
     environment:
-      - 'DB_NAME=peopledb'
-      - 'DB_USER=postgres'
-      - 'DB_PASSWORD=postgres'
-      - 'LOKI_HOST=loki'
-      - 'LOKI_PORT=3100'
+      # JDBC settings for Spring Boot
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/peopledb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - BPL_HEAP_PERCENT=75
+      - SPRING_PROFILES_ACTIVE=local
     depends_on:
       - postgres
-      - loki
 
   postgres:
     container_name: postgres
@@ -79,6 +79,7 @@ volumes:
   promtail-positions:
   grafana-provisioning:
   pgdata:
+  logs:
 
 networks:
   app-network:
