@@ -1,21 +1,21 @@
 services:
-  rest-api:
-    image: nisarg/demo-rest:1.0.0
-    ports:
-      - "8080:8080"
-    networks:
-      - app-network
-    volumes:
-      - ../logs:/workspace/logs
-    environment:
-      # JDBC settings for Spring Boot
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/peopledb
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
-      - BPL_HEAP_PERCENT=75
-      - SPRING_PROFILES_ACTIVE=local
-    depends_on:
-      - postgres
+#  rest-api:
+#    image: nisarg/demo-rest:1.0.0
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - app-network
+#    volumes:
+#      - ../logs:/workspace/logs
+#    environment:
+#      # JDBC settings for Spring Boot
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/peopledb
+#      - SPRING_DATASOURCE_USERNAME=postgres
+#      - SPRING_DATASOURCE_PASSWORD=postgres
+#      - BPL_HEAP_PERCENT=75
+#      - SPRING_PROFILES_ACTIVE=local
+#    depends_on:
+#      - postgres
 
   postgres:
     container_name: postgres
@@ -30,6 +30,11 @@ services:
       - '6432:5432'
     volumes:
         - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   loki:
     networks:
