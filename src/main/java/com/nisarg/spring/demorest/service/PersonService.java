@@ -25,11 +25,13 @@ public class PersonService {
 
   public PersonDto findById(java.util.UUID id) {
     var person = personRepository.findById(id);
+    log.info("Found person with id: {}", id);
     return person.map(personMapper::toDto).orElse(null);
   }
 
   public List<PersonDto> findAll() {
     var persons = personRepository.findAll();
+    log.info("Found {} persons", persons.size());
     return persons.stream()
         .map(personMapper::toDto)
         .toList();
