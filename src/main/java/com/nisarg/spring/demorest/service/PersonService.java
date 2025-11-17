@@ -9,12 +9,15 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Transactional
+@CacheConfig(cacheNames = "persons")
 @Service
 @RequiredArgsConstructor
 public class PersonService {
@@ -22,7 +25,7 @@ public class PersonService {
   private final PersonRepository personRepository;
   private final PersonMapper personMapper;
 
-  @CachePut(value = "persons", key = "#result.id")
+  @CachePut(key = "#result.id")
   public PersonDto save(PersonDto personDto) {
     MDC.put("SavePerson", personDto.getName() + "-" + personDto.getEmail());
     var person = personRepository.save(personMapper.toEntity(personDto));
@@ -31,7 +34,7 @@ public class PersonService {
     return personMapper.toDto(person);
   }
 
-  @CachePut(value = "persons", key = "#id")
+  @Cacheable(key = "#id")
   public PersonDto findById(UUID id) {
     MDC.put("id", id.toString());
     var person = personRepository.findById(id);
@@ -40,7 +43,7 @@ public class PersonService {
     return person.map(personMapper::toDto).orElse(null);
   }
 
-  @CachePut(value = "persons")
+  @Cacheable(key = "'all'")
   public List<PersonDto> findAll() {
     MDC.put("findAll", UUID.randomUUID().toString());
     var persons = personRepository.findAll();
@@ -51,7 +54,7 @@ public class PersonService {
         .toList();
   }
 
-  @CacheEvict(value = "persons", key = "#id")
+  @CacheEvict(key = "#id")
   public void deleteById(UUID id) {
     MDC.put("id", id.toString());
     log.info("Deleting person with id: {}", id);
@@ -59,7 +62,7 @@ public class PersonService {
     MDC.clear();
   }
 
-  @CacheEvict(value = "persons", allEntries = true)
+  @CacheEvict(allEntries = true)
   public void deleteAll() {
     log.info("Deleting all persons");
     personRepository.deleteAll();
@@ -77,6 +80,7 @@ public class PersonService {
     return exists;
   }
 
+  @CachePut(key = "#id")
   public PersonDto update(UUID id, PersonDto personDto) {
     if (!personRepository.existsById(id)) {
       log.warn("Person with id {} not found for update", id);
