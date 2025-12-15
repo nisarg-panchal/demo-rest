@@ -1,0 +1,60 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  # -------- Image --------
+  imageName: acr4nisarg.azurecr.io/demo-rest
+  tag: $(Build.BuildId)
+
+  # -------- Azure --------
+  azureSubscription: azure-rm-conn
+  appServiceName: app-service-4-demo-rest
+  resourceGroup: private_rg
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+# -------------------------------------------------
+# 1. Build Spring Boot OCI image using Paketo
+# -------------------------------------------------
+- task: Maven@4
+  displayName: Build OCI Image (Paketo Buildpacks)
+  inputs:
+    mavenPomFile: pom.xml
+    goals: |
+      clean
+      spring-boot:build-image
+    options: >
+      -DskipTests
+      -Dspring-boot.build-image.imageName=$(imageName):$(tag)
+    javaHomeOption: JDKVersion
+    jdkVersionOption: '21'
+    mavenVersionOption: Default
+
+# -------------------------------------------------
+# 2. Push image to Azure Container Registry
+# -------------------------------------------------
+- task: Docker@2
+  displayName: Push Image to ACR
+  inputs:
+    containerRegistry: acr-conn
+    command: push
+    repository: demo-rest
+    tags: |
+      $(tag)
+      latest
+
+# -------------------------------------------------
+# 3. Deploy container image to Azure App Service
+# -------------------------------------------------
+- task: AzureWebAppContainer@1
+  displayName: Deploy to App Service (Container)
+  inputs:
+    azureSubscription: $(azureSubscription)
+    appName: $(appServiceName)
+    resourceGroupName: $(resourceGroup)
+    containers: |
+      acr4nisarg.azurecr.io/demo-rest:$(tag)
