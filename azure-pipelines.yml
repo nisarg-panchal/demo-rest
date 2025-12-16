@@ -34,8 +34,9 @@ steps:
   displayName: Build OCI Image (Paketo)
   inputs:
     script: |
-      mvn -e -B -DskipTests \
-        clean install spring-boot:build-image
+      mvn -B -DskipTests \
+        -Dspring-boot.build-image.imageName=acr4nisarg.azurecr.io/demo-rest:$(Build.BuildId) \
+        spring-boot:build-image
 
 # -------------------------------------------------
 # 2. Push image to Azure Container Registry
