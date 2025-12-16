@@ -18,6 +18,15 @@ pool:
   name: Default
 
 steps:
+- script: |
+    whoami
+    echo "JAVA_HOME=$JAVA_HOME"
+    which java
+    java -version
+    mvn -version
+    docker version
+  displayName: Debug agent environment
+
 # -------------------------------------------------
 # 1. Build Spring Boot OCI image using Paketo
 # -------------------------------------------------
