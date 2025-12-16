@@ -30,18 +30,12 @@ steps:
 # -------------------------------------------------
 # 1. Build Spring Boot OCI image using Paketo
 # -------------------------------------------------
-- task: Maven@4
-  displayName: Build OCI Image (Paketo Buildpacks)
+- task: CmdLine@2
+  displayName: Build OCI Image (Paketo)
   inputs:
-    mavenPomFile: pom.xml
-    goals: clean spring-boot:build-image
-    options: >
-      -e
-      -DskipTests
-      -Dspring-boot.build-image.imageName=$(imageName):$(tag)
-    javaHomeOption: Path
-    jdkDirectory: $(JAVA_HOME)
-    mavenVersionOption: Default
+    script: |
+      mvn -e -B -DskipTests \
+        clean install spring-boot:build-image
 
 # -------------------------------------------------
 # 2. Push image to Azure Container Registry
