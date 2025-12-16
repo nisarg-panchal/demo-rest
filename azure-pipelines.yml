@@ -27,6 +27,10 @@ steps:
     docker version
   displayName: Debug agent environment
 
+- script: |
+    unset DOCKER_API_VERSION
+    unset DOCKER_HOST
+  displayName: 'Reset Docker env'
 # -------------------------------------------------
 # 1. Build Spring Boot OCI image using Paketo
 # -------------------------------------------------
