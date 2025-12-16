@@ -15,7 +15,7 @@ variables:
   acrConnection: ConnectToACR
 
 pool:
-  vmImage: ubuntu-latest
+  name: Default
 
 steps:
 # -------------------------------------------------
@@ -28,7 +28,6 @@ steps:
     goals: |
       clean
       install
-      package
       spring-boot:build-image
     options: >
       -DskipTests
