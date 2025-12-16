@@ -27,13 +27,12 @@ steps:
     mavenPomFile: pom.xml
     goals: |
       clean
-      install
       spring-boot:build-image
     options: >
       -DskipTests
       -Dspring-boot.build-image.imageName=$(imageName):$(tag)
-    javaHomeOption: JDKVersion
-    jdkVersionOption: '21'
+    javaHomeOption: Path
+    jdkDirectory: $(JAVA_HOME)
     mavenVersionOption: Default
 
 # -------------------------------------------------
