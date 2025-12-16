@@ -41,9 +41,7 @@ steps:
   displayName: Build OCI Image (Paketo Buildpacks)
   inputs:
     mavenPomFile: pom.xml
-    goals: |
-      clean
-      spring-boot:build-image
+    goals: clean spring-boot:build-image
     options: >
       -DskipTests
       -Dspring-boot.build-image.imageName=$(imageName):$(tag)
