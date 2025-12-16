@@ -1,44 +1,69 @@
 trigger:
-- main
+  branches:
+    include:
+      - main
 
 variables:
+  # -------- Image --------
   imageName: acr4nisarg.azurecr.io/demo-rest
   tag: $(Build.BuildId)
 
-jobs:
-- job: BuildImage
-  pool:
-    name: Default
-  steps:
-    - task: MavenAuthenticate@0
-      inputs:
-        artifactsFeeds: nisarg-panchal
+  # -------- Azure --------
+  azureSubscription: svc_conn
+  appServiceName: app-service-4-demo-rest
+  resourceGroup: private_rg
+  acrConnection: ConnectToACR
 
-    - script: |
-        docker version
-        mvn -B -DskipTests \
-          -Dspring-boot.build-image.imageName=$(imageName):$(tag) \
-          spring-boot:build-image
-      displayName: Build OCI Image (Paketo)
+pool:
+  name: Default
 
-- job: PushAndDeploy
-  dependsOn: BuildImage
-  pool:
-    name: Default
-  steps:
-    - task: Docker@2
-      inputs:
-        containerRegistry: ConnectToACR
-        command: push
-        repository: demo-rest
-        tags: |
-          $(tag)
-          latest
+steps:
+- script: |
+    whoami
+    echo "JAVA_HOME=$JAVA_HOME"
+    which java
+    java -version
+    mvn -version
+    docker version
+  displayName: Debug agent environment
 
-    - task: AzureWebAppContainer@1
-      inputs:
-        azureSubscription: svc_conn
-        appName: app-service-4-demo-rest
-        resourceGroupName: private_rg
-        containers: |
-          acr4nisarg.azurecr.io/demo-rest:$(tag)
+# -------------------------------------------------
+# 1. Build Spring Boot OCI image using Paketo
+# -------------------------------------------------
+- task: Maven@4
+  displayName: Build OCI Image (Paketo Buildpacks)
+  inputs:
+    mavenPomFile: pom.xml
+    goals: clean spring-boot:build-image
+    options: >
+      -e
+      -DskipTests
+      -Dspring-boot.build-image.imageName=$(imageName):$(tag)
+    javaHomeOption: Path
+    jdkDirectory: $(JAVA_HOME)
+    mavenVersionOption: Default
+
+# -------------------------------------------------
+# 2. Push image to Azure Container Registry
+# -------------------------------------------------
+- task: Docker@2
+  displayName: Push Image to ACR
+  inputs:
+    containerRegistry: $(acrConnection)
+    command: push
+    repository: demo-rest
+    tags: |
+      $(tag)
+      latest
+
+# -------------------------------------------------
+# 3. Deploy container image to Azure App Service
+# -------------------------------------------------
+- task: AzureWebAppContainer@1
+  displayName: Deploy to App Service (Container)
+  inputs:
+    azureSubscription: $(azureSubscription)
+    appName: $(appServiceName)
+    resourceGroupName: $(resourceGroup)
+    containers: |
+      acr4nisarg.azurecr.io/demo-rest:$(tag)
