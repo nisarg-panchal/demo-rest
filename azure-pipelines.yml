@@ -30,6 +30,13 @@ steps:
 # -------------------------------------------------
 # 1. Build Spring Boot OCI image using Paketo
 # -------------------------------------------------
+
+- task: MavenAuthenticate@0
+  displayName: Authenticate to Azure Artifacts
+  inputs:
+    artifactsFeeds: |
+      nisarg-panchal
+
 - task: Maven@4
   displayName: Build OCI Image (Paketo Buildpacks)
   inputs:
