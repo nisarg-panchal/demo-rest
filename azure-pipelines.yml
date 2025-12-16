@@ -49,7 +49,6 @@ steps:
     repository: demo-rest
     tags: |
       $(tag)
-      latest
 
 # -------------------------------------------------
 # 3. Deploy container image to Azure App Service
