@@ -41,17 +41,13 @@ steps:
     artifactsFeeds: |
       nisarg-panchal
 
-- task: Maven@4
-  displayName: Build OCI Image (Paketo Buildpacks)
+- task: CmdLine@2
+  displayName: 'Build OCI Image (Paketo)'
   inputs:
-    mavenPomFile: pom.xml
-    goals: clean spring-boot:build-image
-    options: >
-      -DskipTests
-      -Dspring-boot.build-image.imageName=$(imageName):$(tag)
-    javaHomeOption: Path
-    jdkDirectory: $(JAVA_HOME)
-    mavenVersionOption: Default
+    script: |
+      set -e
+      docker version
+      mvn -e -X -B -DskipTests spring-boot:build-image
 
 # -------------------------------------------------
 # 2. Push image to Azure Container Registry
