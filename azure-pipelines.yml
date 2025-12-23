@@ -50,6 +50,18 @@ steps:
     tags: |
       $(tag)
 
+
+
+- task: AzureCLI@2
+  displayName: Restart App Service
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      az webapp restart \
+        --name $(appServiceName) \
+        --resource-group $(resourceGroup)
 # # -------------------------------------------------
 # # 3. Deploy container image to Azure App Service
 # # -------------------------------------------------
