@@ -50,14 +50,14 @@ steps:
     tags: |
       $(tag)
 
-# -------------------------------------------------
-# 3. Deploy container image to Azure App Service
-# -------------------------------------------------
-- task: AzureWebAppContainer@1
-  displayName: Deploy to App Service (Container)
-  inputs:
-    azureSubscription: $(azureSubscription)
-    appName: $(appServiceName)
-    resourceGroupName: $(resourceGroup)
-    containers: |
-      acr4nisarg.azurecr.io/demo-rest:$(tag)
+# # -------------------------------------------------
+# # 3. Deploy container image to Azure App Service
+# # -------------------------------------------------
+# - task: AzureWebAppContainer@1
+#   displayName: Deploy to App Service (Container)
+#   inputs:
+#     azureSubscription: $(azureSubscription)
+#     appName: $(appServiceName)
+#     resourceGroupName: $(resourceGroup)
+#     containers: |
+#       acr4nisarg.azurecr.io/demo-rest:$(tag)
