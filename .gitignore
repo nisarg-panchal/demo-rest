@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+/logs/app-json.log
+/logs/app-json-2025-11-03.0.log.gz
+/logs/app-json-2025-11-04.0.log.gz

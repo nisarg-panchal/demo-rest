@@ -9,8 +9,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.cache.annotation.Cacheable;
 
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "persons")
+@Cacheable(value = "persons")
 @Builder
 @Getter
 @Setter

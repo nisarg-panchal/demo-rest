@@ -1,11 +1,13 @@
 package com.nisarg.spring.demorest.controller;
 
-import com.nisarg.spring.demorest.entity.Person;
-import com.nisarg.spring.demorest.repository.PersonRepository;
+import com.nisarg.spring.demorest.dto.PersonDto;
+import com.nisarg.spring.demorest.service.PersonService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/persons")
 public class PersonController {
 
-  private final PersonRepository personRepository;
+  private final PersonService personService;
 
   @GetMapping("/echo")
   public String echo() {
@@ -27,20 +29,21 @@ public class PersonController {
   }
 
   @GetMapping("/{id}")
-  public Person findById(@PathVariable UUID id) {
+  public ResponseEntity<PersonDto> findById(@PathVariable UUID id) {
     log.info("Finding Person with id {}", id);
-    return personRepository.findById(id).orElse(null);
+    return ResponseEntity.ok(personService.findById(id));
   }
 
   @GetMapping
-  public List<Person> findAll() {
+  public ResponseEntity<List<PersonDto>> findAll() {
     log.info("Finding all Persons");
-    return personRepository.findAll();
+    return ResponseEntity.ok(personService.findAll());
   }
 
   @PostMapping
-  public Person save(@RequestBody Person person) {
+  public ResponseEntity<PersonDto> save(@RequestBody PersonDto person) {
     log.info("Saving Person: {}", person);
-    return personRepository.save(person);
+    PersonDto savedPerson = personService.save(person);
+    return new ResponseEntity<>(savedPerson, HttpStatus.CREATED);
   }
 }
