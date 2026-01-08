@@ -10,6 +10,7 @@ import org.springframework.web.filter.ShallowEtagHeaderFilter;
 public class EtagConfig {
   @Bean
   public ShallowEtagHeaderFilter etagFilter() {
+    log.info("Etag Filter created!");
     return new ShallowEtagHeaderFilter();
   }
 }
