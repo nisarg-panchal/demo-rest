@@ -6,13 +6,17 @@
   <artifactId>demo-rest</artifactId>
 
   <!-- Spring Boot Parent -->
+
   <build>
     <plugins>
-
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <annotationProcessorPaths>
+            <path>
+              <artifactId>spring-boot-configuration-processor</artifactId>
+              <groupId>org.springframework.boot</groupId>
+            </path>
             <path>
               <artifactId>lombok</artifactId>
               <groupId>org.projectlombok</groupId>
@@ -20,29 +24,60 @@
             <path>
               <artifactId>mapstruct-processor</artifactId>
               <groupId>org.mapstruct</groupId>
-              <version>1.6.0.Beta1</version>
+              <version>1.6.3</version>
             </path>
           </annotationProcessorPaths>
         </configuration>
         <groupId>org.apache.maven.plugins</groupId>
       </plugin>
-
+      <plugin>
+        <artifactId>hibernate-enhance-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <configuration>
+              <enableAssociationManagement>true</enableAssociationManagement>
+              <enableDirtyTracking>true</enableDirtyTracking>
+              <enableLazyInitialization>true</enableLazyInitialization>
+            </configuration>
+            <goals>
+              <goal>enhance</goal>
+            </goals>
+            <id>enhance</id>
+          </execution>
+        </executions>
+        <groupId>org.hibernate.orm.tooling</groupId>
+        <version>${hibernate.version}</version>
+      </plugin>
+      <plugin>
+        <artifactId>native-maven-plugin</artifactId>
+        <groupId>org.graalvm.buildtools</groupId>
+      </plugin>
       <plugin>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <cleanCache>true</cleanCache>
+          <detail>true</detail>
+          <excludes>
+            <exclude>
+              <artifactId>lombok</artifactId>
+              <groupId>org.projectlombok</groupId>
+            </exclude>
+          </excludes>
+          <image>
+            <builder>paketobuildpacks/builder-jammy-base</builder>
+            <env>
+              <BP_JVM_VERSION>21</BP_JVM_VERSION>
+              <BP_LOG_LEVEL>INFO</BP_LOG_LEVEL>
+              <BP_MAVEN_BUILD_ARGUMENTS>-DskipTests</BP_MAVEN_BUILD_ARGUMENTS>
+            </env>
+            <name>nisarg/demo-rest:${project.version}</name>
+            <runImage>paketobuildpacks/run-jammy-base</runImage>
+          </image>
+        </configuration>
         <groupId>org.springframework.boot</groupId>
       </plugin>
-
     </plugins>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-    </resources>
   </build>
-
   <dependencies>
 
     <!-- ==================== Spring Boot Core ===================== -->
@@ -120,8 +155,8 @@
 
     <dependency>
       <artifactId>mapstruct</artifactId>
-      <version>1.6.3</version>
       <groupId>org.mapstruct</groupId>
+      <version>1.6.3</version>
     </dependency>
 
     <!-- ==================== Tracing ===================== -->
@@ -169,8 +204,8 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <groupId>com.nisarg.spring</groupId>
 
+  <groupId>com.nisarg.spring</groupId>
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -184,7 +219,6 @@
     <java.version>21</java.version>
     <spring.ai.version>1.0.0-M6</spring.ai.version>
   </properties>
-
 
   <version>1.0.0</version>
 
