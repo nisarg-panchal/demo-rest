@@ -120,8 +120,9 @@
 
     <!-- ==================== Redis / Cache ===================== -->
     <dependency>
-      <artifactId>spring-boot-starter-data-redis</artifactId>
-      <groupId>org.springframework.boot</groupId>
+      <artifactId>logstash-logback-encoder</artifactId>
+      <groupId>net.logstash.logback</groupId>
+      <version>9.0</version>
     </dependency>
 
     <dependency>
@@ -141,14 +142,6 @@
       <groupId>org.projectlombok</groupId>
       <scope>provided</scope>
       <version>1.18.42</version>
-    </dependency>
-
-    <!-- ==================== Logging ===================== -->
-
-    <dependency>
-      <artifactId>logstash-logback-encoder</artifactId>
-      <groupId>net.logstash.logback</groupId>
-      <version>8.0</version>
     </dependency>
 
     <!-- ==================== MapStruct ===================== -->
