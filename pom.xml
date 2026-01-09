@@ -1,259 +1,217 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="
-           http://maven.apache.org/POM/4.0.0
-           https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
-
-  <!-- ========================================================= -->
-  <!-- Parent -->
-  <!-- ========================================================= -->
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.8</version>
-    <relativePath/>
-  </parent>
-
-  <groupId>com.nisarg.spring</groupId>
   <artifactId>demo-rest</artifactId>
-  <version>1.0.0</version>
-  <name>demo-rest</name>
 
-  <!-- ========================================================= -->
-  <!-- Properties -->
-  <!-- ========================================================= -->
-  <properties>
-    <java.version>21</java.version>
-    <spring-ai.version>1.1.0</spring-ai.version>
-    <mapstruct.version>1.6.0.Beta1</mapstruct.version>
-    <lombok.version>1.18.38</lombok.version>
-  </properties>
+  <!-- Spring Boot Parent -->
 
-  <!-- ========================================================= -->
-  <!-- Dependency Management -->
-  <!-- ========================================================= -->
-  <dependencyManagement>
-    <dependencies>
-
-      <!-- Spring AI BOM -->
-      <dependency>
-        <groupId>org.springframework.ai</groupId>
-        <artifactId>spring-ai-bom</artifactId>
-        <version>${spring-ai.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-    </dependencies>
-  </dependencyManagement>
-
-  <!-- ========================================================= -->
-  <!-- Dependencies -->
-  <!-- ========================================================= -->
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <artifactId>spring-boot-configuration-processor</artifactId>
+              <groupId>org.springframework.boot</groupId>
+            </path>
+            <path>
+              <artifactId>lombok</artifactId>
+              <groupId>org.projectlombok</groupId>
+            </path>
+            <path>
+              <artifactId>mapstruct-processor</artifactId>
+              <groupId>org.mapstruct</groupId>
+              <version>1.6.3</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+      </plugin>
+      <plugin>
+        <artifactId>hibernate-enhance-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <configuration>
+              <enableAssociationManagement>true</enableAssociationManagement>
+              <enableDirtyTracking>true</enableDirtyTracking>
+              <enableLazyInitialization>true</enableLazyInitialization>
+            </configuration>
+            <goals>
+              <goal>enhance</goal>
+            </goals>
+            <id>enhance</id>
+          </execution>
+        </executions>
+        <groupId>org.hibernate.orm.tooling</groupId>
+        <version>6.6.40.Final</version>
+      </plugin>
+      <plugin>
+        <artifactId>native-maven-plugin</artifactId>
+        <groupId>org.graalvm.buildtools</groupId>
+      </plugin>
+      <plugin>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <cleanCache>true</cleanCache>
+          <detail>true</detail>
+          <excludes>
+            <exclude>
+              <artifactId>lombok</artifactId>
+              <groupId>org.projectlombok</groupId>
+            </exclude>
+          </excludes>
+          <image>
+            <builder>paketobuildpacks/builder-jammy-base</builder>
+            <env>
+              <BP_JVM_VERSION>21</BP_JVM_VERSION>
+              <BP_LOG_LEVEL>INFO</BP_LOG_LEVEL>
+              <BP_MAVEN_BUILD_ARGUMENTS>-DskipTests</BP_MAVEN_BUILD_ARGUMENTS>
+            </env>
+            <name>nisarg/demo-rest:${project.version}</name>
+            <runImage>paketobuildpacks/run-jammy-base</runImage>
+          </image>
+        </configuration>
+        <groupId>org.springframework.boot</groupId>
+      </plugin>
+    </plugins>
+  </build>
   <dependencies>
 
-    <!-- ===== Core Spring Boot ===== -->
+    <!-- ==================== Spring Boot Core ===================== -->
+
     <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+      <groupId>org.springframework.boot</groupId>
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.springframework.boot</groupId>
+    </dependency>
+
+    <dependency>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
+      <groupId>org.springframework.boot</groupId>
     </dependency>
 
-    <!-- ===== Metrics & Tracing ===== -->
-    <dependency>
-      <groupId>io.micrometer</groupId>
-      <artifactId>micrometer-registry-prometheus</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>io.micrometer</groupId>
-      <artifactId>micrometer-tracing-bridge-brave</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>io.zipkin.reporter2</groupId>
-      <artifactId>zipkin-reporter-brave</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>net.logstash.logback</groupId>
-      <artifactId>logstash-logback-encoder</artifactId>
-      <version>8.0</version>
-    </dependency>
-
-
-    <!-- ===== OpenAPI ===== -->
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-      <version>2.8.6</version>
+      <version>3.0.1</version>
     </dependency>
 
-    <!-- ===== MapStruct ===== -->
+    <!-- Spring Boot Admin -->
     <dependency>
-      <groupId>org.mapstruct</groupId>
-      <artifactId>mapstruct</artifactId>
-      <version>${mapstruct.version}</version>
+      <artifactId>spring-boot-admin-starter-client</artifactId>
+      <groupId>de.codecentric</groupId>
+      <version>3.5.6</version>
     </dependency>
+    <!-- ==================== Database ===================== -->
 
-    <!-- ===== Lombok (Java 21 SAFE) ===== -->
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>${lombok.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- ===== Database ===== -->
-    <dependency>
+      <artifactId>postgresql</artifactId>
       <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
       <scope>runtime</scope>
     </dependency>
 
-    <!-- ===== Cache / Redis ===== -->
+    <!-- ==================== Redis / Cache ===================== -->
     <dependency>
-      <groupId>org.springframework.boot</groupId>
+      <artifactId>logstash-logback-encoder</artifactId>
+      <groupId>net.logstash.logback</groupId>
+      <version>9.0</version>
+    </dependency>
+
+    <dependency>
       <artifactId>spring-boot-starter-cache</artifactId>
+      <groupId>org.springframework.boot</groupId>
     </dependency>
 
-    <dependency>
-      <groupId>org.springframework.session</groupId>
-      <artifactId>spring-session-data-redis</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>redis.clients</groupId>
-      <artifactId>jedis</artifactId>
-      <version>5.1.3</version>
-    </dependency>
-
-    <!-- ⚠️ Hibernate 6 compatible Redisson -->
-    <dependency>
-      <groupId>org.redisson</groupId>
-      <artifactId>redisson-hibernate-6</artifactId>
-      <version>3.27.2</version>
-    </dependency>
-
-    <!-- ===== Spring AI ===== -->
-    <dependency>
-      <groupId>org.springframework.ai</groupId>
-      <artifactId>spring-ai-starter-model-postgresml-embedding</artifactId>
-    </dependency>
-
-    <!-- ===== Dev Only ===== -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+
+
+    <!-- ==================== Lombok ===================== -->
+    <dependency>
+      <artifactId>lombok</artifactId>
+      <groupId>org.projectlombok</groupId>
+      <scope>provided</scope>
+      <version>1.18.42</version>
+    </dependency>
+
+    <!-- ==================== MapStruct ===================== -->
+
+    <dependency>
+      <artifactId>mapstruct</artifactId>
+      <groupId>org.mapstruct</groupId>
+      <version>1.6.3</version>
+    </dependency>
+
+    <!-- ==================== Tracing ===================== -->
+
+    <dependency>
+      <artifactId>micrometer-tracing-bridge-brave</artifactId>
+      <groupId>io.micrometer</groupId>
+    </dependency>
+
+    <dependency>
+      <artifactId>zipkin-reporter-brave</artifactId>
+      <groupId>io.zipkin.reporter2</groupId>
+    </dependency>
+
+    <!-- ==================== Validations ===================== -->
+    <dependency>
+      <artifactId>spring-boot-starter-validation</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+
+    <!-- ==================== Devtools ===================== -->
+
+    <dependency>
       <artifactId>spring-boot-devtools</artifactId>
-      <scope>runtime</scope>
+      <groupId>org.springframework.boot</groupId>
       <optional>true</optional>
+      <scope>runtime</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-docker-compose</artifactId>
-      <scope>runtime</scope>
-      <optional>true</optional>
-    </dependency>
+    <!-- ==================== Testing ===================== -->
 
-    <!-- ===== Test ===== -->
     <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
-      <scope>annotationProcessor</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-testcontainers</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>postgresql</artifactId>
       <scope>test</scope>
     </dependency>
 
   </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <artifactId>snakeyaml</artifactId>
+        <groupId>org.yaml</groupId>
+        <version>2.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-  <!-- ========================================================= -->
-  <!-- Build -->
-  <!-- ========================================================= -->
-  <build>
-    <plugins>
+  <groupId>com.nisarg.spring</groupId>
+  <modelVersion>4.0.0</modelVersion>
 
-      <!-- Compiler -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.13.0</version>
-        <configuration>
-          <release>${java.version}</release>
-          <annotationProcessorPaths>
-            <path>
-              <groupId>org.projectlombok</groupId>
-              <artifactId>lombok</artifactId>
-              <version>${lombok.version}</version>
-            </path>
-            <path>
-              <groupId>org.mapstruct</groupId>
-              <artifactId>mapstruct-processor</artifactId>
-              <version>${mapstruct.version}</version>
-            </path>
-            <path>
-              <groupId>org.springframework.boot</groupId>
-              <artifactId>spring-boot-configuration-processor</artifactId>
-            </path>
-          </annotationProcessorPaths>
-        </configuration>
-      </plugin>
+  <parent>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <relativePath/>
+    <version>4.0.1</version>
+  </parent>
 
-      <!-- Spring Boot -->
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <image>
-            <env>
-              <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
-              <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
-            </env>
-          </image>
-        </configuration>
-      </plugin>
+  <properties>
+    <java.version>21</java.version>
+    <spring.ai.version>1.0.0-M6</spring.ai.version>
+  </properties>
 
-    </plugins>
-  </build>
-
-  <!-- ========================================================= -->
-  <!-- Repositories -->
-  <!-- ========================================================= -->
-  <repositories>
-    <repository>
-      <id>nisarg-panchal</id>
-      <url>https://pkgs.dev.azure.com/nisarg-panchal/_packaging/nisarg-panchal/maven/v1</url>
-    </repository>
-  </repositories>
+  <version>1.0.0</version>
 
 </project>

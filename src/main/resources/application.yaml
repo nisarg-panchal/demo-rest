@@ -1,0 +1,74 @@
+spring:
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+  jmx:
+    enabled: true
+  application:
+    admin:
+      enabled: true
+      jmx-name: org.springframework.boot:type=Admin,name=SpringApplication
+    name: demo-rest
+
+  datasource:
+    url: jdbc:postgresql://localhost:6432/peopledb
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000 # 10 minutes
+      cache-null-values: false
+      enable-statistics: true
+
+  output:
+    ansi:
+      enabled: ALWAYS
+
+  docker:
+    compose:
+      file: docker/compose.yaml
+
+server:
+  port: 8080
+  compression:
+    enabled: true
+  http2:
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      cors:
+        allowed-headers: "*"
+        allowed-origins: "*"
+        allowed-methods: "*"
+        allowed-origin-patterns: "*"
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+  show-actuator: true

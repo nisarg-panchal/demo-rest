@@ -18,20 +18,19 @@ services:
 #      - postgres
 
   postgres:
+    image: postgres:17
     container_name: postgres
-    networks:
-      - app-network
-    image: 'postgres:latest'
+    networks: [ app-network ]
     environment:
-      - 'POSTGRES_DB=peopledb'
-      - 'POSTGRES_PASSWORD=postgres'
-      - 'POSTGRES_USER=postgres'
+      POSTGRES_DB: peopledb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - '6432:5432'
+      - "6432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/18/main/
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d peopledb" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -63,7 +62,7 @@ services:
 
   grafana:
     networks:
-        - app-network
+      - app-network
     image: grafana/grafana:11.1.0
     ports:
       - "3000:3000"
