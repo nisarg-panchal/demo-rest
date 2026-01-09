@@ -25,6 +25,9 @@ public class PersonService {
   private final PersonRepository personRepository;
   private final PersonMapper personMapper;
 
+  /**
+   * Persists person; caches result by ID; clears MDC
+   */
   @CachePut(key = "#result.id")
   public PersonDto save(PersonDto personDto) {
     MDC.put("SavePerson", personDto.getName() + "-" + personDto.getEmail());
@@ -34,6 +37,9 @@ public class PersonService {
     return personMapper.toDto(person);
   }
 
+  /**
+   * Finds person by ID; caches result; clears MDC
+   */
   @Cacheable(key = "#id")
   public PersonDto findById(UUID id) {
     MDC.put("id", id.toString());
@@ -43,6 +49,9 @@ public class PersonService {
     return person.map(personMapper::toDto).orElse(null);
   }
 
+  /**
+   * Finds all persons; caches result; clears MDC
+   */
   @Cacheable(key = "'all'")
   public List<PersonDto> findAll() {
     MDC.put("findAll", UUID.randomUUID().toString());
@@ -80,6 +89,9 @@ public class PersonService {
     return exists;
   }
 
+  /**
+   * Updates person if present; caches result; logs activity
+   */
   @CachePut(key = "#id")
   public PersonDto update(UUID id, PersonDto personDto) {
     if (!personRepository.existsById(id)) {

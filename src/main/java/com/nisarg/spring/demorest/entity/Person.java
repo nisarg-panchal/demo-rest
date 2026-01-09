@@ -2,6 +2,7 @@ package com.nisarg.spring.demorest.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import java.io.Serializable;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +24,7 @@ import org.springframework.cache.annotation.Cacheable;
 @RequiredArgsConstructor
 @Entity
 @AllArgsConstructor
-public class Person {
+public class Person implements Serializable {
 
   @Id
   @UuidGenerator

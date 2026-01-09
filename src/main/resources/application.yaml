@@ -11,6 +11,9 @@ spring:
       enabled: true
       jmx-name: org.springframework.boot:type=Admin,name=SpringApplication
     name: demo-rest
+  threads:
+    virtual:
+      enabled: true
 
   datasource:
     url: jdbc:postgresql://localhost:6432/peopledb
