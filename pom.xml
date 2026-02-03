@@ -185,7 +185,7 @@
           </execution>
         </executions>
         <groupId>org.hibernate.orm.tooling</groupId>
-        <version>6.6.40.Final</version>
+        <version>6.6.42.Final</version>
       </plugin>
       <plugin>
         <artifactId>native-maven-plugin</artifactId>
