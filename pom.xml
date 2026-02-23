@@ -56,7 +56,7 @@
     <dependency>
       <artifactId>spring-boot-admin-starter-client</artifactId>
       <groupId>de.codecentric</groupId>
-      <version>3.5.6</version>
+      <version>4.0.1</version>
     </dependency>
     <!-- ==================== Database ===================== -->
 
